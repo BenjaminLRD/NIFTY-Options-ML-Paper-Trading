@@ -7,10 +7,6 @@ A **simulation-only** project in two parts:
 
 > **No real orders are placed. No broker is connected. No real market data or credentials are used by the application. No profitability and no predictive edge are claimed.**
 
-## Disclosure: how this was built
-
-This project was developed with **substantial assistance from an AI coding assistant (Claude Code)**: the V6 application code, tests and documentation were produced with it. The research (`research/`) predates that work; its final report is written in an assistant's voice, so it was also AI-assisted, but the repository does not record which tool was used. This README does not state what the project owner personally wrote or decided, because that is not recorded in the repository. The owner's own contribution statement, if any, is to be added by the owner. Milestone records in `application/docs/` carry an attribution note saying they were written by the assistant.
-
 ## What the results actually show
 
 - **Research (real NSE settlement data, frozen protocol, evaluated once):** on the untouched window 2026-06-30 to 2026-09-28, neither model beat the training-rate prior for calls or puts. All four Brier differences were slightly positive or about zero and every 97.5% interval included 0 (**not supported**). One call-side relationship (`lr1`) was borderline unstable over time (p = 0.0235 against a 0.025 threshold). Absence of a detected effect is not proof that none exists. Details: [docs/RESULTS.md](docs/RESULTS.md) and `research/V5.1/V5_1_Final_Research_Report.md`.
