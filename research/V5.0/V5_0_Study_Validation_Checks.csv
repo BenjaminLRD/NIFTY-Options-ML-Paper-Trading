@@ -1,0 +1,8 @@
+scope,check,issues,result,detail
+study,dates with more than one underlying value,0,PASS,
+study,eligible rows with target date not after feature date,0,PASS,
+study,eligible rows with missing lr1/ur1/target,0,PASS,
+study,duplicate contract-date keys among eligible rows,0,PASS,
+study,eligible rows whose source rows disagree between origins,0,PASS,
+study,eligible rows with settlement below the price floor at t,0,PASS,
+walk_forward,training labels reaching the test block,0,PASS,

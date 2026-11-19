@@ -1,0 +1,4 @@
+# Only needed to run the research scripts (the application needs nothing beyond Python 3.12+).
+# Versions the V5.1 evaluation was run with (V5_1_Eval_Run_Record.csv): Python 3.14.6, numpy 2.5.1, pandas 3.0.5
+numpy==2.5.1
+pandas==3.0.5

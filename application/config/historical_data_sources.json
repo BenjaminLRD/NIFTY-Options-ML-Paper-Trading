@@ -1,0 +1,167 @@
+{
+  "schema": "niftypaper.data_source_registry/1",
+  "checked_on": "2026-10-27",
+  "purpose": "Candidate sources of historical NIFTY options data. Nothing here is enabled: every entry has enabled_for_v6 = false until the owner decides, and any use for virtual trading or simulation needs the terms question on that entry resolved in writing. Each claim says whether it was verified (and how), assumed, or is unknown.",
+  "status_values": ["verified", "assumed", "unknown"],
+  "sources": [
+    {
+      "id": "nse_udiff_bhavcopy",
+      "name": "NSE F&O UDiFF Common Bhavcopy (daily end-of-day file)",
+      "publisher": "National Stock Exchange of India (NSE)",
+      "access": "Download one file per trading day from the NSE reports page https://www.nseindia.com/all-reports-derivatives (zip of one CSV). The research folder holds 133 days that were fetched with a script from the archive host, per its download log.",
+      "cost": {"value": "free to download", "status": "verified", "evidence": "File links on the NSE reports page; no payment step. NSE's data list also places 'Historical End of Day data' in a chargeable basket for voluminous (>2 GB) requests."},
+      "account_required": {"value": false, "status": "verified", "evidence": "Reports page links are public."},
+      "capabilities": {
+        "nifty_option_contracts": {"value": "yes", "status": "verified", "evidence": "133 local files contain NIFTY index-option rows (instrument type IDO)."},
+        "nifty_index_value": {"value": "partial", "status": "verified", "evidence": "Each option row carries UndrlygPric (the underlying value for the date); no separate index series."},
+        "bid_ask": {"value": "no", "status": "verified", "evidence": "No bid, ask or offer column in any of the 133 local files (inventory tool)."},
+        "last_traded_price": {"value": "partial", "status": "verified", "evidence": "LastPric is present on every traded row, but on 2026-06-05 it was also non-zero on 292 of 701 NIFTY option rows with zero volume, where it equals the previous close (carried forward), and 0.00 on the rest. It proves a trade only when volume is above zero."},
+        "ohlc": {"value": "yes", "status": "verified", "evidence": "OpnPric, HghPric, LwPric, ClsPric columns."},
+        "settlement_price": {"value": "yes", "status": "verified", "evidence": "SttlmPric column, positive on 99.7% of NIFTY option rows. It can differ a lot from the close for thin contracts (for example 5014.10 against a carried close of 4442.25 on 2026-06-05)."},
+        "volume_and_open_interest": {"value": "yes", "status": "verified", "evidence": "TtlTradgVol, TtlNbOfTxsExctd, OpnIntrst, ChngInOpnIntrst columns."},
+        "observation_timestamp": {"value": "date_only", "status": "verified", "evidence": "TradDt and BizDt are dates; no time of day in any column."},
+        "lot_size": {"value": "yes", "status": "verified", "evidence": "NewBrdLotQty; the value 65 on all local NIFTY option rows (2026-02-23 to 2026-09-29)."},
+        "tick_size": {"value": "no", "status": "verified", "evidence": "No tick-size column."},
+        "expired_contracts": {"value": "partial", "status": "verified", "evidence": "A contract is present until its expiry date and then disappears; there is no list of expired contracts. Expiry-day rows were present for 29 of 32 past expiries in the local files (the 3 missing fall in the sparse early period)."},
+        "stable_instrument_id": {"value": "no", "status": "verified", "evidence": "FinInstrmId was reused for different contracts at different times (827 of 8,040 NIFTY option tokens); no two contracts shared a token on the same day, and every contract kept a single token for its whole life in these files."}
+      },
+      "history": {
+        "locally_verified_range": {"value": "2026-02-23 to 2026-09-29, 133 trading days", "status": "verified", "evidence": "tools/inventory_bhavcopy.py on the research folder, docs/historical_data/existing_data_inventory.json."},
+        "available_on_nse_now": {"value": "files up to 2026-10-26 are listed", "status": "verified", "evidence": "Reports page viewed 2026-10-27."},
+        "start_of_format": {"value": "about July 2024", "status": "assumed", "evidence": "Search results gave conflicting dates for retiring the old file (20-May-2024 in one circular, 08-Jul-2024 on the reports page); the first UDiFF date was not verified."}
+      },
+      "terms": {
+        "url": "https://www.nseindia.com/nse-terms-of-use",
+        "checked_on": "2026-10-27",
+        "updated_on_page": "29/10/2025",
+        "automated_access": "prohibited_on_the_website_by_terms_scope_of_archive_host_unclear",
+        "virtual_trading_or_simulation_use": "prohibited_by_terms_text_unless_nse_agrees_in_writing",
+        "downloads_for_personal_use": "copyright_policy_allows_personal_non_commercial_or_educational_download",
+        "quoted_clauses": [
+          "User is prohibited to conduct any systematic or automated data collection activities (including scraping, data mining, data extraction and data harvesting) on or in relation to our Website / Mobile Application.",
+          "...shall not, in any form and manner, use or make the data or Content available on the Website / Mobile Application, for any gaming, virtual trading or simulation activities under any circumstances whatsoever.",
+          "Website means https://www.nseindia.com/."
+        ],
+        "note": "The terms define the Website as www.nseindia.com; the files are served from a separate archive host and linked from the Website's reports page. Whether the clauses reach them is a legal question this project cannot settle. Treat as NOT permitted for virtual trading or simulation until NSE confirms otherwise in writing."
+      },
+      "supports": {"settlement_research": "yes", "eod_replay": "yes", "intraday_replay": "no"},
+      "limitations": ["No bid/ask, so no spread or executable fill.", "Date-only timestamps.", "About 44% of NIFTY option rows had no trade that day; their close is carried forward, not traded.", "Instrument token is not a permanent key."],
+      "enabled_for_v6": false
+    },
+    {
+      "id": "nse_contractwise_historical",
+      "name": "NSE Contract-wise Price Volume Data (website download form)",
+      "publisher": "NSE",
+      "access": "Interactive form under Historical Reports > Equity Derivatives > Contract-wise Price Volume Data (https://www.nseindia.com/report-detail/fo_eq_security); the research folder holds 5 distinct downloads (10 files incl. copies).",
+      "cost": {"value": "free to download", "status": "verified", "evidence": "Listed by NSE as freely available website data in its research data list."},
+      "capabilities": {
+        "nifty_option_contracts": {"value": "partial", "status": "verified", "evidence": "The 5 local files cover one expiry only (29-Sep-2026), about 12 strikes a day per option type, dates 2025-10-01 to 2026-06-29; the PE file for the last window (30-Mar to 29-Jun-2026) is not present."},
+        "bid_ask": {"value": "no", "status": "verified", "evidence": "Columns: Open, High, Low, Close, LTP, Settle Price, No. of contracts, Turnover, Premium Turnover, Open Int, Change in OI, Underlying Value."},
+        "observation_timestamp": {"value": "date_only", "status": "verified", "evidence": "Date column only."},
+        "lot_size": {"value": "no", "status": "verified", "evidence": "No lot-size column."}
+      },
+      "history": {
+        "per_request_window": {"value": "about 90 days", "status": "assumed", "evidence": "Each local download spans 89 to 91 days; no official NSE statement of the limit was found."}
+      },
+      "terms": {"url": "https://www.nseindia.com/nse-terms-of-use", "checked_on": "2026-10-27", "automated_access": "prohibited_on_the_website_by_terms", "virtual_trading_or_simulation_use": "prohibited_by_terms_text_unless_nse_agrees_in_writing", "note": "Same terms as above; this is a page on www.nseindia.com itself, so automation is clearly within the Website."},
+      "supports": {"settlement_research": "yes", "eod_replay": "yes", "intraday_replay": "no"},
+      "limitations": ["'-' marks missing values.", "Coverage depends on what was requested; the local files are a thin slice."],
+      "enabled_for_v6": false
+    },
+    {
+      "id": "nse_contract_master",
+      "name": "NSE contract master / contracts available for trading (specifications, lot size)",
+      "publisher": "NSE",
+      "access": "Daily 'F&O-MII Contract File' (NSE_FO_contract_DDMMYYYY.csv.gz) on the reports page; a contracts-available page; a paid 'Historical Securities/Contracts master'.",
+      "cost": {"value": "current files free; historical master chargeable above 2 GB", "status": "verified", "evidence": "NSE research data list (First Basket, item 3: includes lot size and quantity freeze)."},
+      "capabilities": {"lot_size": {"value": "yes", "status": "verified", "evidence": "NSE's own list describes lot size in this master."}, "tick_size": {"value": "unknown", "status": "unknown", "evidence": "File contents were not read."}},
+      "terms": {"url": "https://www.nseindia.com/nse-terms-of-use", "checked_on": "2026-10-27", "automated_access": "prohibited_on_the_website_by_terms", "virtual_trading_or_simulation_use": "prohibited_by_terms_text_unless_nse_agrees_in_writing"},
+      "supports": {"settlement_research": "unknown", "eod_replay": "unknown", "intraday_replay": "no"},
+      "limitations": ["Not downloaded or read in this phase."],
+      "enabled_for_v6": false
+    },
+    {
+      "id": "niftyindices_historical_index",
+      "name": "NSE Indices historical index data (NIFTY 50 values)",
+      "publisher": "NSE Indices Limited",
+      "access": "https://www.niftyindices.com/reports/historical-data (named in NSE's data list). Not accessed in this phase.",
+      "cost": {"value": "free", "status": "assumed", "evidence": "Listed among website data; fee page not checked."},
+      "terms": {
+        "url": "https://niftyindices.com/terms-of-use", "checked_on": "2026-10-27", "automated_access": "prohibited_without_express_written_consent", "virtual_trading_or_simulation_use": "not_mentioned_but_personal_non_commercial_use_only",
+        "quoted_clauses": ["You may not conduct any systematic or automated data collection activities (including scraping, data mining, data extraction and data harvesting) on or in relation to our website without our express written consent.", "The Site may be used only for lawful purposes by individuals for personal, non-commercial use only.", "Aggregate, copy or duplicate in any manner any of the content or information available from the Site"]
+      },
+      "supports": {"settlement_research": "unknown", "eod_replay": "unknown", "intraday_replay": "no"},
+      "limitations": ["Coverage and granularity not checked.", "The bhavcopy already carries an end-of-day underlying value per row."],
+      "enabled_for_v6": false
+    },
+    {
+      "id": "nse_research_data_program",
+      "name": "NSE research data sharing (Research Initiative / Data Sharing Policy)",
+      "publisher": "NSE",
+      "access": "Fill the Data Seeking Request Form and send it to nseri@nse.co.in (https://www.nseindia.com/research/research-initiatives).",
+      "cost": {"value": "free for reasonable volumes, charged for larger or processed requests", "status": "assumed", "evidence": "Search summary of the SEBI circular of 20 Dec 2024 (up to 2 GB per researcher per year free); the NSE data list marks bulk EOD, contract masters and tick-by-tick trades/orders as a chargeable 'voluminous (>2 GB)' basket."},
+      "capabilities": {
+        "bid_ask": {"value": "unknown", "status": "unknown", "evidence": "NSE's list names 'tick-by-tick trades and orders historical data (without client and broker information)'. Order data could allow a book to be rebuilt; format, depth and coverage were not seen."},
+        "observation_timestamp": {"value": "intraday", "status": "assumed", "evidence": "Tick-by-tick data is described; the specification was not read."}
+      },
+      "terms": {"url": "https://www.nseindia.com/research/research-initiatives", "checked_on": "2026-10-27", "automated_access": "not_applicable", "virtual_trading_or_simulation_use": "unknown", "note": "NSE says data for research is 'strictly limited to academic and non-commercial use'. Whether a private individual qualifies, and whether paper-trading replay counts, is for NSE to say."},
+      "supports": {"settlement_research": "unknown", "eod_replay": "unknown", "intraday_replay": "unknown"},
+      "limitations": ["Eligibility, turnaround, cost and format are unknown until NSE replies.", "The data list says tick-by-tick history covers a limited look-back (a footnote about 6 months was only partly legible in the extracted text)."],
+      "enabled_for_v6": false
+    },
+    {
+      "id": "nse_data_analytics_paid",
+      "name": "NSE Data & Analytics paid historical data (end-of-day and order and trade level)",
+      "publisher": "NSE Data & Analytics",
+      "access": "Subscription by e-mail to marketdata@nse.co.in (https://www.nseindia.com/static/market-data/eod-historical-data-subscription). Technical specifications and sample files for F&O trade data and for order and trade data are offered for download on that page.",
+      "cost": {"value": "paid; tariff not read", "status": "verified", "evidence": "Page headed 'Paid End of the day/ Historical Data'; tariff PDF not opened."},
+      "capabilities": {"bid_ask": {"value": "unknown", "status": "unknown", "evidence": "Order and trade level data for F&O exists per the page; the specification and samples were not opened."}, "observation_timestamp": {"value": "intraday", "status": "assumed", "evidence": "Implied by order and trade level data; unverified."}},
+      "terms": {"url": "https://www.nseindia.com/static/market-data/eod-historical-data-subscription", "checked_on": "2026-10-27", "automated_access": "not_applicable", "virtual_trading_or_simulation_use": "unknown", "note": "A signed undertaking is part of the process; its terms were not read."},
+      "supports": {"settlement_research": "unknown", "eod_replay": "unknown", "intraday_replay": "unknown"},
+      "limitations": ["Cost unknown, possibly large for a private project.", "Nothing was purchased, requested or downloaded."],
+      "enabled_for_v6": false
+    },
+    {
+      "id": "fyers_history_api",
+      "name": "FYERS History API and expired F&O data",
+      "publisher": "FYERS",
+      "access": "REST API with a daily access token for a FYERS account (see docs/V6_0_4_FREE_DATA_PROVIDER_RESEARCH.md).",
+      "cost": {"value": "free on the Standard plan with limits; Prime paid", "status": "verified", "evidence": "FYERS Plans & Limits page read on 2026-10-26."},
+      "capabilities": {
+        "bid_ask": {"value": "no", "status": "verified", "evidence": "History responses are OHLCV (plus open interest on request)."},
+        "observation_timestamp": {"value": "intraday", "status": "verified", "evidence": "Candles from seconds to months; seconds data is Prime only."},
+        "expired_contracts": {"value": "partial", "status": "verified", "evidence": "Standard: expired F&O daily data for the last 2 years, intraday limited to 10 requests per day."}
+      },
+      "terms": {"url": "https://fyers.in/terms-and-conditions-api", "checked_on": "2026-10-26", "automated_access": "api_is_the_intended_channel", "virtual_trading_or_simulation_use": "requires_written_confirmation", "note": "API Terms Section 11 prohibits using exchange data for paper trading and virtual trading. The owner reports written FYERS confirmation for the live-data use; it has not been seen and its scope for stored history is unknown."},
+      "supports": {"settlement_research": "partial", "eod_replay": "partial", "intraday_replay": "no"},
+      "limitations": ["Candles only: no spread, so fills cannot be realistic.", "Standard history windows roll forward, so older data disappears."],
+      "enabled_for_v6": false
+    },
+    {
+      "id": "broker_api_candles_other",
+      "name": "Other broker APIs (Groww, Dhan, Upstox, Zerodha Kite Connect, Angel One Smart API)",
+      "publisher": "various brokers",
+      "access": "Each needs that broker's account and API credentials.",
+      "cost": {"value": "mixed", "status": "verified", "evidence": "Groww: candles on paid plans only (docs/V6-0.3_GROWW_FEASIBILITY.md). Upstox: expired-instrument APIs need the paid Plus plan. Kite Connect: 500 rupees a month, history included, per Zerodha's support page. Angel One: release note says free historical data including NFO. Dhan: expired options docs read; subscription terms not found."},
+      "capabilities": {
+        "bid_ask": {"value": "no", "status": "verified", "evidence": "The documentation pages seen describe candles (OHLC, volume, open interest); none described historical bid/ask."},
+        "expired_contracts": {"value": "varies", "status": "verified", "evidence": "Dhan: rolling expired options, 5 years, ATM +/-10 strikes, 1 to 60 minute candles. Upstox: expired option candles on Plus (community reports of empty results). Kite: not available for expired options per staff forum replies. Angel One: not verified."}
+      },
+      "terms": {"url": "see each provider", "checked_on": "2026-10-27", "automated_access": "api_is_the_intended_channel", "virtual_trading_or_simulation_use": "unknown", "note": "Terms were not read for these providers, apart from the FYERS and Groww entries elsewhere."},
+      "supports": {"settlement_research": "partial", "eod_replay": "partial", "intraday_replay": "no"},
+      "limitations": ["Candle data only. A candle's close is not an executable price.", "Most need a paid plan for expired contracts."],
+      "enabled_for_v6": false
+    },
+    {
+      "id": "third_party_datasets",
+      "name": "Third-party datasets and vendors (Kaggle, GitHub, scraped mirrors, paid vendors)",
+      "publisher": "various",
+      "access": "Not evaluated.",
+      "cost": {"value": "unknown", "status": "unknown", "evidence": "Not checked."},
+      "terms": {"url": "unknown", "checked_on": "2026-10-27", "automated_access": "unknown", "virtual_trading_or_simulation_use": "unknown", "note": "Free mirrors usually repackage NSE data scraped from the website, which inherits the NSE terms and has no provenance; paid vendors were not examined."},
+      "supports": {"settlement_research": "unknown", "eod_replay": "unknown", "intraday_replay": "unknown"},
+      "limitations": ["No provenance, no licence review. Not recommended as a primary source."],
+      "enabled_for_v6": false
+    }
+  ]
+}

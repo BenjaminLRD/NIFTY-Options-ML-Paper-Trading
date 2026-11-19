@@ -1,0 +1,17 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "niftypaper"
+version = "0.6.4"
+description = "NIFTY options ML paper-trading demonstration (simulated execution only, invented demo data)."
+readme = "README.md"
+requires-python = ">=3.12"
+# Deliberately empty. The scaffold uses only the Python standard library (dataclasses, decimal, enum, hashlib, json,
+# re, subprocess for local `git ls-files`, unittest). Any future dependency must be added here with a written reason
+# in README.md, and must not be a broker SDK (the safety scan and a test reject those names).
+dependencies = []
+
+[tool.setuptools.packages.find]
+where = ["src"]

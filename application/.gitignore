@@ -1,0 +1,26 @@
+# secrets and credentials: never commit
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+secrets/
+credentials*.json
+
+# market data, databases, logs and reports are produced at runtime, not source
+data/
+logs/
+reports/
+*.db
+*.sqlite
+*.sqlite3
+
+# python
+__pycache__/
+*.pyc
+.venv/
+venv/
+build/
+dist/
+*.egg-info/
+config/local/

@@ -1,0 +1,5 @@
+option_type,feature,blocks_included,dates,rows,observed_H,block_rho_min,block_rho_max,p_value,n_perm,note
+CE,lr1,6,177,2253,7.1221,-0.3732,0.2585,0.0235,2000,permutes dates between blocks; anti-conservative under serial dependence; blocks of ~30 dates only detect large changes
+PE,lr1,6,177,2361,3.8091,-0.1645,0.2258,0.3058,2000,permutes dates between blocks; anti-conservative under serial dependence; blocks of ~30 dates only detect large changes
+CE,ur1,6,177,2253,8.7128,-0.4109,0.3052,0.028,2000,permutes dates between blocks; anti-conservative under serial dependence; blocks of ~30 dates only detect large changes
+PE,ur1,6,177,2361,5.898,-0.2631,0.2629,0.2219,2000,permutes dates between blocks; anti-conservative under serial dependence; blocks of ~30 dates only detect large changes

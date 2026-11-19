@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "specs": [
+    {
+      "root_symbol": "NIFTY",
+      "instrument_type": "index_option",
+      "lot_size": 65,
+      "tick_size": "0.05",
+      "valid_from": null,
+      "verification_status": "UNVERIFIED_OBSERVED",
+      "note": "Lot size 65 and a 0.05 price grid were observed in sampled NSE daily F&O bhavcopy files (NewBrdLotQty and traded prices) in the earlier research project. Not checked against an exchange circular; effective date unknown. Replace with verified, effective-dated values before any use beyond tests."
+    }
+  ]
+}

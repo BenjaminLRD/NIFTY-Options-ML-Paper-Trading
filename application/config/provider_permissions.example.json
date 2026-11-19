@@ -1,0 +1,10 @@
+{
+  "schema_version": 1,
+  "providers": {
+    "fyers": {
+      "virtual_trading_permitted": false,
+      "evidence": "describe where the provider's written permission is kept, for example: FYERS support e-mail of YYYY-MM-DD",
+      "confirmed_on": "YYYY-MM-DD"
+    }
+  }
+}

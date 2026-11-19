@@ -1,0 +1,4 @@
+# Research files are evidence with recorded SHA-256 hashes: store and check out byte-for-byte (no line-ending conversion).
+research/** -text
+# Screenshots are binary.
+screenshots/** binary

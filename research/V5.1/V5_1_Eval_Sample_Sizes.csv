@@ -1,0 +1,5 @@
+option_type,set,eligible_rows,distinct_dates,first_date,last_date
+CE,training,2253,177,2025-10-06,2026-06-25
+CE,evaluation,902,64,2026-06-30,2026-09-28
+PE,training,2361,177,2025-10-06,2026-06-25
+PE,evaluation,1034,64,2026-06-30,2026-09-28

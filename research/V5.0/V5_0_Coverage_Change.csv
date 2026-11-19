@@ -1,0 +1,5 @@
+dataset,option_type,raw_rows,raw_dates,last_raw_date,eligible_rows,eligible_dates,last_eligible_date
+before (contract-wise files only),CE,2411,180,2026-06-29,2253,177,2026-06-25
+before (contract-wise files only),PE,1631,120,2026-03-27,1443,117,2026-03-25
+after (+ local official bhavcopy),CE,2411,180,2026-06-29,2253,177,2026-06-25
+after (+ local official bhavcopy),PE,2651,180,2026-06-29,2361,177,2026-06-25

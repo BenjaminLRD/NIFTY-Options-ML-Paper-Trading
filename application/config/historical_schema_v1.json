@@ -1,0 +1,154 @@
+{
+  "schema": "niftypaper.canonical_schema/1",
+  "name": "historical_option_data",
+  "version": "1.0.0-draft",
+  "status": "DRAFT: implemented in Phase 2 (src/niftypaper/historical) and exercised on invented fixtures only; no real market data has been ingested. Field names may still change.",
+  "principles": [
+    "Raw source files are kept unchanged and hashed; canonical records are derived from them and always point back (file, hash, row).",
+    "A missing value is null. Nothing is estimated, interpolated, forward-filled or taken from another source.",
+    "A source value that means 'no trade' (UDiFF 0.00, contract-wise '-') becomes null in the canonical price fields and sets a quality flag; the raw value stays in the raw file.",
+    "Record kinds are separate types. Only QUOTE_SNAPSHOT can be a fill source, and only with a documented quote time. EOD, bar and settlement records have no bid or ask field at all, so they cannot be mistaken for quotes.",
+    "Every record says when it became knowable (available_at). A replay may use a record only at or after that instant.",
+    "Rejected, conflicting and excluded records are never dropped silently: each gets an EXCLUSION entry."
+  ],
+  "contract_key": {
+    "format": "{underlying}|{expiry YYYY-MM-DD}|{strike with 2 decimals}|{CE or PE}",
+    "example": "NIFTY|2026-09-29|25000.00|CE",
+    "note": "The natural key. A source instrument id (for example the UDiFF FinInstrmId) is stored but is NOT a key: it was reused for different contracts at different times in the local files."
+  },
+  "enums": {
+    "option_type": ["CE", "PE"],
+    "observation_precision": ["DAY", "MINUTE", "SECOND", "TICK"],
+    "quality_status": ["OK", "OK_WITH_FLAGS", "EXCLUDED"],
+    "quality_flags": ["PRICE_ZERO_NO_TRADE", "PRICE_DASH_NO_TRADE", "CLOSE_CARRIED_NO_TRADE", "LAST_CARRIED_NO_TRADE", "LOT_SIZE_ABSENT", "TICK_SIZE_ABSENT", "UNDERLYING_VALUE_ABSENT", "TURNOVER_MEANING_UNVERIFIED", "VOLUME_UNIT_INFERRED", "ID_NOT_STABLE", "INTERVAL_TIMESTAMP_CONVENTION_UNKNOWN", "AVAILABILITY_RULE_DEFAULT", "VOLUME_UNIT_UNKNOWN", "QUOTE_SIZES_ABSENT"],
+    "origin_class": ["SYNTHETIC_FIXTURE", "UNVERIFIED_SOURCE", "UNKNOWN"],
+    "time_semantics": ["QUOTE_TIME", "LAST_TRADE_TIME", "RECEIVE_TIME", "DAY_MARKER", "UNKNOWN"],
+    "exclusion_reason": ["DUPLICATE_OF_EARLIER_COPY", "CONFLICTING_COPIES", "DUPLICATE_ROW_IN_FILE", "CONFLICTING_ROW_IN_FILE", "INVALID_NUMBER", "INVALID_DATE", "MISSING_REQUIRED_FIELD", "UNKNOWN_COLUMN_LAYOUT", "HASH_MISMATCH_WITH_MANIFEST", "OUTSIDE_REQUESTED_WINDOW", "MALFORMED_RECORD", "UNKNOWN_RECORD_KIND", "RECORD_KIND_MISMATCH", "FORBIDDEN_FIELD", "INVALID_TIMESTAMP", "INVALID_TIMEZONE", "INVALID_PRICE", "INVALID_OHLC", "OFF_TICK", "CROSSED_QUOTE", "INVALID_SPEC", "INCONSISTENT_TIMES", "FUTURE_OBSERVATION", "ORIGIN_LABEL_MISMATCH", "MISSING_FILE", "SIZE_MISMATCH", "UNLISTED_FILE", "MALFORMED_FILE"],
+    "bar_interval": ["1m", "3m", "5m", "15m", "30m", "60m", "1d"]
+  },
+  "common_provenance_fields": {
+    "schema_version": {"type": "string", "nullable": false},
+    "source_id": {"type": "string", "nullable": false, "note": "an id from config/historical_data_sources.json"},
+    "source_file": {"type": "string", "nullable": false, "note": "path relative to the raw store"},
+    "source_file_sha256": {"type": "string", "nullable": false},
+    "source_content_sha256": {"type": "string", "nullable": true, "note": "hash of the CSV inside a zip, so copies in different wrappers can be compared"},
+    "source_row": {"type": "integer", "nullable": false, "note": "1-based data row in the file"},
+    "retrieved_at_utc": {"type": "datetime_tz", "nullable": true, "note": "from the download log; null when the file was placed by hand and no log exists"},
+    "parser_version": {"type": "string", "nullable": false},
+    "ingested_at_utc": {"type": "datetime_tz", "nullable": false},
+    "quality_status": {"type": "enum:quality_status", "nullable": false},
+    "quality_flags": {"type": "array<enum:quality_flags>", "nullable": false}
+  },
+  "record_kinds": {
+    "EOD_CONTRACT_DAY": {
+      "description": "One contract on one trading day from an end-of-day file (UDiFF bhavcopy or the contract-wise download). Settlement and closing information, not quotes.",
+      "fill_source": false,
+      "fields": {
+        "contract_key": {"type": "string", "nullable": false},
+        "underlying": {"type": "string", "nullable": false, "source": "UDiFF TckrSymb (index options: FinInstrmTp = IDO); contract-wise: Symbol"},
+        "expiry": {"type": "date", "nullable": false, "source": "UDiFF XpryDt; contract-wise: Expiry"},
+        "strike": {"type": "decimal", "nullable": false, "source": "UDiFF StrkPric; contract-wise: Strike Price"},
+        "option_type": {"type": "enum:option_type", "nullable": false, "source": "OptnTp / Option type"},
+        "source_instrument_id": {"type": "string", "nullable": true, "source": "UDiFF FinInstrmId", "note": "meaningful only together with trading_date"},
+        "source_instrument_name": {"type": "string", "nullable": true, "source": "UDiFF FinInstrmNm"},
+        "trading_date": {"type": "date", "nullable": false, "timezone": "Asia/Kolkata", "source": "UDiFF TradDt; contract-wise: Date"},
+        "observation_precision": {"type": "enum:observation_precision", "nullable": false, "fixed": "DAY"},
+        "observed_at": {"type": "datetime_tz", "nullable": true, "fixed": null, "note": "always null: these files carry no time of day"},
+        "available_at": {"type": "datetime_tz", "nullable": false, "rule": "trading_date 23:59:59 IST (conservative; the exact publication time is not verified)"},
+        "open": {"type": "decimal", "nullable": true}, "high": {"type": "decimal", "nullable": true}, "low": {"type": "decimal", "nullable": true},
+        "close": {"type": "decimal", "nullable": true, "note": "for a contract that did not trade this is a carried-forward value, flagged CLOSE_CARRIED_NO_TRADE"},
+        "last_price": {"type": "decimal", "nullable": true, "source": "UDiFF LastPric; contract-wise: LTP", "note": "on zero-volume rows UDiFF can show the previous close here (flag LAST_CARRIED_NO_TRADE); it evidences a trade only when volume is above zero"},
+        "previous_close": {"type": "decimal", "nullable": true},
+        "settlement_price": {"type": "decimal", "nullable": true},
+        "underlying_value": {"type": "decimal", "nullable": true, "source": "UDiFF UndrlygPric; contract-wise: Underlying Value"},
+        "traded": {"type": "boolean", "nullable": true, "derived": true, "rule": "true if reported volume or transactions are above zero; null if neither is reported"},
+        "volume": {"type": "integer", "nullable": true, "source": "UDiFF TtlTradgVol; contract-wise: No. of contracts"},
+        "volume_unit": {"type": "enum", "values": ["CONTRACTS", "UNITS", "UNKNOWN"], "nullable": false, "note": "NIFTY option volumes in the UDiFF files are not multiples of the lot size (9 of 1,059 traded rows on 2026-06-05 were) and turnover divided by volume is about lot size x strike, so they look like contracts (lots); stock-option rows looked like units. Inferred from the numbers, not from a definition: flag VOLUME_UNIT_INFERRED."},
+        "transactions": {"type": "integer", "nullable": true, "source": "UDiFF TtlNbOfTxsExctd"},
+        "turnover_value": {"type": "decimal", "nullable": true, "flag": "TURNOVER_MEANING_UNVERIFIED", "note": "in the UDiFF files turnover divided by volume is about lot size x strike for NIFTY options, so it looks like notional value rather than premium paid; the contract-wise download has separate Turnover and Premium Turnover columns. The official field definitions (the 'New Bhavcopy Format readme') have not been read; never use it for cost modelling"},
+        "open_interest": {"type": "integer", "nullable": true},
+        "change_in_open_interest": {"type": "integer", "nullable": true},
+        "lot_size": {"type": "integer", "nullable": true, "source": "UDiFF NewBrdLotQty; absent from the contract-wise download (flag LOT_SIZE_ABSENT)"},
+        "tick_size": {"type": "decimal", "nullable": true, "note": "not present in either file: always null here (flag TICK_SIZE_ABSENT)"}
+      },
+      "forbidden_fields": ["bid", "ask", "bid_qty", "ask_qty", "depth"]
+    },
+    "INTRADAY_BAR": {
+      "description": "An OHLCV candle from a broker API. Good for signals; its close is not a price anyone could trade at.",
+      "fill_source": false,
+      "fields": {
+        "contract_key": {"type": "string", "nullable": false},
+        "interval": {"type": "enum:bar_interval", "nullable": false},
+        "bar_start": {"type": "datetime_tz", "nullable": false},
+        "bar_end": {"type": "datetime_tz", "nullable": false},
+        "timestamp_convention": {"type": "enum", "values": ["START", "END", "UNKNOWN"], "nullable": false, "note": "what the provider's candle timestamp means; UNKNOWN sets INTERVAL_TIMESTAMP_CONVENTION_UNKNOWN"},
+        "available_at": {"type": "datetime_tz", "nullable": false, "rule": "bar_end"},
+        "open": {"type": "decimal", "nullable": true}, "high": {"type": "decimal", "nullable": true}, "low": {"type": "decimal", "nullable": true}, "close": {"type": "decimal", "nullable": true},
+        "volume": {"type": "integer", "nullable": true},
+        "open_interest": {"type": "integer", "nullable": true}
+      },
+      "forbidden_fields": ["bid", "ask", "bid_qty", "ask_qty", "depth", "settlement_price"]
+    },
+    "QUOTE_SNAPSHOT": {
+      "description": "A bid and ask at an instant. The only kind that can ever be a fill source, and only when the time is a documented quote time. No current dataset contains any.",
+      "fill_source": true,
+      "fields": {
+        "contract_key": {"type": "string", "nullable": false},
+        "observed_at": {"type": "datetime_tz", "nullable": false},
+        "time_semantics": {"type": "enum:time_semantics", "nullable": false},
+        "available_at": {"type": "datetime_tz", "nullable": false, "rule": "observed_at"},
+        "bid": {"type": "decimal", "nullable": false}, "ask": {"type": "decimal", "nullable": false},
+        "bid_qty": {"type": "integer", "nullable": true}, "ask_qty": {"type": "integer", "nullable": true},
+        "last_price": {"type": "decimal", "nullable": true},
+        "depth": {"type": "array<{side, price, quantity, orders}>", "nullable": true},
+        "lot_size": {"type": "integer", "nullable": false},
+        "tick_size": {"type": "decimal", "nullable": false}
+      },
+      "fill_eligibility_rule": "time_semantics is QUOTE_TIME, 0 < bid < ask, both on the tick, lot_size and tick_size present; at replay time the V6-0.1 eligibility boundary must also pass (displayed sizes, freshness against the replay clock)."
+    },
+    "UNDERLYING_EOD": {
+      "description": "Daily value of the index.",
+      "fill_source": false,
+      "fields": {
+        "underlying": {"type": "string", "nullable": false}, "trading_date": {"type": "date", "nullable": false}, "available_at": {"type": "datetime_tz", "nullable": false},
+        "open": {"type": "decimal", "nullable": true}, "high": {"type": "decimal", "nullable": true}, "low": {"type": "decimal", "nullable": true}, "close": {"type": "decimal", "nullable": true}
+      },
+      "forbidden_fields": ["bid", "ask"]
+    },
+    "CONTRACT_SPEC": {
+      "description": "Lot size and tick size of an underlying's options over a period, with how well each is known.",
+      "fill_source": false,
+      "fields": {
+        "underlying": {"type": "string", "nullable": false},
+        "effective_from": {"type": "date", "nullable": false}, "effective_to": {"type": "date", "nullable": true},
+        "lot_size": {"type": "integer", "nullable": false}, "tick_size": {"type": "decimal", "nullable": false},
+        "verification_status": {"type": "enum", "values": ["OFFICIAL_DOCUMENT", "OBSERVED_IN_DATA", "UNVERIFIED"], "nullable": false},
+        "evidence": {"type": "string", "nullable": false}
+      }
+    },
+    "EXCLUSION": {
+      "description": "Why a source record is not in the canonical set. One entry per excluded record.",
+      "fill_source": false,
+      "fields": {
+        "source_file": {"type": "string", "nullable": false}, "source_row": {"type": "integer", "nullable": true},
+        "contract_key": {"type": "string", "nullable": true}, "trading_date": {"type": "date", "nullable": true},
+        "reason": {"type": "enum:exclusion_reason", "nullable": false},
+        "detail": {"type": "string", "nullable": false},
+        "other_copy": {"type": "string", "nullable": true, "note": "file and row of the record that was kept or that conflicts"},
+        "policy_version": {"type": "string", "nullable": false}
+      }
+    }
+  },
+  "duplicate_and_conflict_policy": {
+    "version": "1",
+    "key": "(record_kind, contract_key, trading_date or bar_start or observed_at, source_id)",
+    "identical_copies": "Records with the same key and identical values (same source_content_sha256 for whole files) are duplicates. Keep the copy that sorts first by (relative path, source_file_sha256); every other copy gets an EXCLUSION of DUPLICATE_OF_EARLIER_COPY naming the kept copy.",
+    "conflicting_copies": "Records with the same key and different values are a conflict. Exclude ALL of them (CONFLICTING_COPIES / CONFLICTING_ROW_IN_FILE) and list them; never prefer the newest, the largest or the first. A person resolves it and records the decision.",
+    "across_sources": "Different source_id values are never merged and never used to fill each other's gaps.",
+    "ordering": "Deterministic: files are processed in sorted path order and rows in file order, so the same inputs always give the same outputs."
+  },
+  "raw_store": {
+    "layout": "data/raw/{source_id}/{original file name} plus data/raw/{source_id}/MANIFEST.jsonl with one line per file: relative path, sha256, bytes, retrieved_at_utc (or null), origin (url or 'manual download'), terms_url, terms_checked_on.",
+    "rules": ["Files are copied in unchanged and never edited.", "A file whose hash differs from its MANIFEST line is rejected with HASH_MISMATCH_WITH_MANIFEST.", "The store lives under data/ (git-ignored), never under the research folder."]
+  }
+}

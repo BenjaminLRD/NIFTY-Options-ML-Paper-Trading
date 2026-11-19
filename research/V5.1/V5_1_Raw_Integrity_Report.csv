@@ -1,0 +1,24 @@
+scope,check,issues,result,detail
+files,download hash and size equal the log,0,PASS,
+files,required columns present,0,PASS,
+files,file name date equals trade date inside the file,0,PASS,
+files,one trade date per file,0,PASS,
+files,file not retrieved (HTTP error),1,NOTE,2026-09-14 (an NSE trading holiday must be confirmed against NSE's holiday list)
+rows,"unparseable date, expiry or strike",0,PASS,
+rows,option type not CE/PE,0,PASS,
+rows,"duplicate contract-date keys (date, expiry, option type, strike)",0,PASS,
+rows,missing settlement or close,0,PASS,
+rows,"negative price, volume or open interest",0,PASS,
+rows,high below low,0,PASS,
+rows,trade date outside the declared window,0,PASS,
+rows,trade date on a weekend,0,PASS,
+rows,expiry before trade date,0,PASS,
+rows,dates with more than one underlying value,0,PASS,
+rows,settlement <= 0 (kept unchanged; excluded by the frozen price floor),406,NOTE,406 of them have a positive close
+rows,zero volume (informational),50305,NOTE,50305 of 108536 rows
+rows,traded rows with zero transactions,0,PASS,
+rows,"close differs from settlement on traded rows (informational, kept as separate columns)",10022,NOTE,10022 of 58231 traded rows
+rows,settlement identical to the previous date on two consecutive traded dates (possible stale value; informational),514,NOTE,
+calendar,weekday in the window with no file (see retrieval status),1,NOTE,2026-09-14
+study grid,study-expiry rows outside the frozen V5.0 strike grid,12626,NOTE,informational: extra strikes are ignored by the frozen protocol
+study grid,date/option-type pairs missing part of the frozen strike grid,130,NOTE,grid size 22

@@ -1,0 +1,5 @@
+option_type,feature,test_blocks,test_rows,test_dates,pooled_brier_diff_vs_prior,ci_unadjusted95_lo,ci_unadjusted95_hi,ci_bonferroni2_lo,ci_bonferroni2_hi,interval_entirely_below_0,note
+CE,lr1,4,1575,119,0.00218,-0.0044,0.0087,-0.0052,0.0098,False,eval-date resampling only (fitted parameters held fixed); blocks stack in time
+PE,lr1,4,1685,119,0.00108,-0.0036,0.007,-0.0045,0.0074,False,eval-date resampling only (fitted parameters held fixed); blocks stack in time
+CE,ur1,4,1575,119,0.00792,-0.0051,0.022,-0.0063,0.0239,False,eval-date resampling only (fitted parameters held fixed); blocks stack in time
+PE,ur1,4,1685,119,0.00422,-0.0075,0.0174,-0.0094,0.0184,False,eval-date resampling only (fitted parameters held fixed); blocks stack in time

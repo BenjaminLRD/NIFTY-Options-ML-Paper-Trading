@@ -1,0 +1,2 @@
+max_training_feature_date,max_training_label_date,min_evaluation_feature_date,max_evaluation_label_date,purged_training_rows_label_in_window
+2026-06-25,2026-06-29,2026-06-30,2026-09-29,30

@@ -1,0 +1,9 @@
+id,option_type,feature,test,result,verdict,caveat
+STAB_lr1_CE,CE,lr1,"date-permutation heterogeneity, reject if p < 0.025","p=0.0235; block rho range [-0.3756, 0.2589] over 8 blocks",INSTABILITY SUPPORTED,"settlement-to-settlement direction; not an executable return; no spreads, fees or slippage"
+BRIER_lr1_CE,CE,lr1,97.5% block-bootstrap interval of Brier difference entirely below 0,"diff=0.00218; 902 rows, 64 dates",NOT SUPPORTED,"settlement-to-settlement direction; not an executable return; no spreads, fees or slippage"
+STAB_ur1_CE,CE,ur1,"date-permutation heterogeneity, reject if p < 0.025","p=0.066; block rho range [-0.4027, 0.3101] over 8 blocks",HOMOGENEITY NOT REJECTED,"settlement-to-settlement direction; not an executable return; no spreads, fees or slippage"
+BRIER_ur1_CE,CE,ur1,97.5% block-bootstrap interval of Brier difference entirely below 0,"diff=0.00048; 902 rows, 64 dates",NOT SUPPORTED,"settlement-to-settlement direction; not an executable return; no spreads, fees or slippage"
+STAB_lr1_PE,PE,lr1,"date-permutation heterogeneity, reject if p < 0.025","p=0.3753; block rho range [-0.1725, 0.2297] over 8 blocks",HOMOGENEITY NOT REJECTED,"settlement-to-settlement direction; not an executable return; no spreads, fees or slippage"
+BRIER_lr1_PE,PE,lr1,97.5% block-bootstrap interval of Brier difference entirely below 0,"diff=4e-05; 1034 rows, 64 dates",NOT SUPPORTED,"settlement-to-settlement direction; not an executable return; no spreads, fees or slippage"
+STAB_ur1_PE,PE,ur1,"date-permutation heterogeneity, reject if p < 0.025","p=0.3868; block rho range [-0.2662, 0.2597] over 8 blocks",HOMOGENEITY NOT REJECTED,"settlement-to-settlement direction; not an executable return; no spreads, fees or slippage"
+BRIER_ur1_PE,PE,ur1,97.5% block-bootstrap interval of Brier difference entirely below 0,"diff=1e-05; 1034 rows, 64 dates",NOT SUPPORTED,"settlement-to-settlement direction; not an executable return; no spreads, fees or slippage"

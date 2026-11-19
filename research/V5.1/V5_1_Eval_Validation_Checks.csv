@@ -1,0 +1,10 @@
+scope,check,issues,result,detail
+split,training rows with a label date after 2026-06-29,0,PASS,
+split,evaluation rows dated before 2026-06-30,0,PASS,
+split,rows in both training and evaluation,0,PASS,
+split,evaluation rows with a label date after 2026-09-29,0,PASS,
+split,training set differs from the V5.0 eligible rows with label on or before 2026-06-29,0,PASS,
+data,dates with more than one underlying value,0,PASS,
+data,eligible rows below the price floor at t,0,PASS,
+data,duplicate contract-date keys among eligible rows,0,PASS,
+data,trading dates in the window differ from the number of downloaded files,0,PASS,

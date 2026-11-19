@@ -1,0 +1,5 @@
+option_type,feature,model,train_rows,train_dates,eval_rows,eval_dates,training_up_rate,evaluation_up_rate,brier_prior,brier_model,brier_diff,log_loss_prior,log_loss_model,ci97.5_lo,ci97.5_hi,interval_entirely_below_0,note
+CE,lr1,B1_lag1_settle_logreturn,2253,177,902,64,0.4421,0.3836,0.23987,0.24205,0.00218,0.67281,0.67719,-0.00042,0.00441,False,"moving-block bootstrap over dates, block 5, 2000 resamples; fitted parameters held fixed"
+PE,lr1,B1_lag1_settle_logreturn,2361,177,1034,64,0.4795,0.4632,0.24891,0.24895,4e-05,0.69097,0.69105,-0.00169,0.00144,False,"moving-block bootstrap over dates, block 5, 2000 resamples; fitted parameters held fixed"
+CE,ur1,B2_lag1_underlying_return,2253,177,902,64,0.4421,0.3836,0.23987,0.24035,0.00048,0.67281,0.67379,-0.00096,0.0015,False,"moving-block bootstrap over dates, block 5, 2000 resamples; fitted parameters held fixed"
+PE,ur1,B2_lag1_underlying_return,2361,177,1034,64,0.4795,0.4632,0.24891,0.24892,1e-05,0.69097,0.69098,-0.00078,0.00059,False,"moving-block bootstrap over dates, block 5, 2000 resamples; fitted parameters held fixed"

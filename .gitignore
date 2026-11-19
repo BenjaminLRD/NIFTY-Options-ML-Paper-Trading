@@ -1,0 +1,31 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# Local state and generated output (never commit)
+data/
+application/data/
+*.lock
+
+# Secrets and local configuration (never commit)
+.env
+.env.*
+*.pem
+*.key
+config/local/
+application/config/local/
+
+# Large NSE-derived research data stays out of the repository
+research/**/V5_*_Acquired_Raw/
+research/**/*Normalized*.csv
+research/**/*Study_Dataset.csv
+research/**/BhavCopy_NSE_*
+
+# Editors / OS
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db

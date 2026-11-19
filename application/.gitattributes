@@ -1,0 +1,6 @@
+# keep the optional shell hook LF-only (a CRLF shebang breaks it); everything else follows git defaults
+.githooks/* text eol=lf
+*.sh text eol=lf
+
+# the synthetic fixtures are hashed by their manifest and by tests: they must be byte-identical on every platform (LF)
+tests/fixtures/** text eol=lf
