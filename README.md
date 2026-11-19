@@ -38,6 +38,7 @@ Double-click **`Stop_Dashboard.exe`**. Closing the browser tab does **not** stop
 
 This project was developed with **substantial assistance from an AI coding assistant (Claude Code)**: the V6 application code, tests and documentation were produced with it. The research (`research/`) predates that work; its final report is written in an assistant's voice, so it was also AI-assisted, but the repository does not record which tool was used. This README does not state what the project owner personally wrote or decided, because that is not recorded in the repository. The owner's own contribution statement, if any, is to be added by the owner. Milestone records in `application/docs/` carry an attribution note saying they were written by the assistant.
 
+
 ## What the results actually show
 
 - **Research (real NSE settlement data, frozen protocol, evaluated once):** on the untouched window 2026-06-30 to 2026-09-28, neither model beat the training-rate prior for calls or puts. All four Brier differences were slightly positive or about zero and every 97.5% interval included 0 (**not supported**). One call-side relationship (`lr1`) was borderline unstable over time (p = 0.0235 against a 0.025 threshold). Absence of a detected effect is not proof that none exists. Details: [docs/RESULTS.md](docs/RESULTS.md) and `research/V5.1/V5_1_Final_Research_Report.md`.
@@ -113,12 +114,23 @@ NSE's terms of use (checked 2026-10-27, recorded in `application/config/historic
 
 ## Screenshots
 
-All four show **invented data** (labelled on screen).
+All screenshots below show **invented synthetic data**, clearly labelled in the application. They are demonstrations of the simulator, not real market results.
 
-| | |
-|---|---|
-| [Main dashboard (Synthetic Mode)](screenshots/01_main_dashboard.png) | [ML replay page, top](screenshots/02_ml_top.png) |
-| [ML replay page, full](screenshots/03_ml_full.png) | [Unknown saved replay: error state](screenshots/04_ml_unknown_run.png) |
+### Main Dashboard — Synthetic Mode
+
+![Main dashboard](screenshots/01_main_dashboard.png)
+
+### ML Replay Page — Overview
+
+![ML replay page overview](screenshots/02_ml_top.png)
+
+### ML Replay Page — Full View
+
+![ML replay page full view](screenshots/03_ml_full.png)
+
+### Unknown Saved Replay — Error State
+
+![Unknown saved replay error state](screenshots/04_ml_unknown_run.png)
 
 ## Limitations
 
