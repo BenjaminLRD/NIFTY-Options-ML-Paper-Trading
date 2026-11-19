@@ -33,6 +33,14 @@ Double-click **`Stop_Dashboard.exe`**. Closing the browser tab does **not** stop
 - The application runs **locally in Synthetic Mode on invented data**. No broker connection, no real market data and no real-money trading are involved.
 - The **first launch creates the application's local data folder** (`application/data/`, ignored by git) and an initial synthetic replay (`run1`). Later launches show the saved replay unchanged.
 - Launcher source, build instructions and troubleshooting: [launcher/README.md](launcher/README.md).
+
+  ## Project Showcase
+
+Explore the project walkthrough and demonstration guide:
+
+📘 [NIFTY Options ML Paper-Trading — Showcase Guide (PDF)](presentation/showcase/NIFTY_Showcase_Guide.pdf)
+
+Location: `presentation/showcase/NIFTY_Showcase_Guide.pdf`
   
 ## What the results actually show
 
