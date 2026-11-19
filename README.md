@@ -79,12 +79,23 @@ NSE's terms of use (checked 2026-10-27, recorded in `application/config/historic
 
 ## Screenshots
 
-All four show **invented data** (labelled on screen).
+All screenshots below show **invented synthetic data**, clearly labelled in the application. They are demonstrations of the simulator, not real market results.
 
-| | |
-|---|---|
-| [Main dashboard (Synthetic Mode)](screenshots/01_main_dashboard.png) | [ML replay page, top](screenshots/02_ml_top.png) |
-| [ML replay page, full](screenshots/03_ml_full.png) | [Unknown saved replay: error state](screenshots/04_ml_unknown_run.png) |
+### Main Dashboard — Synthetic Mode
+
+![Main dashboard](screenshots/01_main_dashboard.png)
+
+### ML Replay Page — Overview
+
+![ML replay page overview](screenshots/02_ml_top.png)
+
+### ML Replay Page — Full View
+
+![ML replay page full view](screenshots/03_ml_full.png)
+
+### Unknown Saved Replay — Error State
+
+![Unknown saved replay error state](screenshots/04_ml_unknown_run.png)
 
 ## Limitations
 
