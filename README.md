@@ -7,6 +7,33 @@ A **simulation-only** project in two parts:
 
 > **No real orders are placed. No broker is connected. No real market data or credentials are used by the application. No profitability and no predictive edge are claimed.**
 
+## Quick Start (Windows)
+
+The recommended way to run the application is to **double-click a launcher**. No commands needed.
+
+### Start the dashboard
+
+1. Download or clone this repository.
+2. Keep `NIFTY_PaperTrading.exe`, `Stop_Dashboard.exe` and the `application` folder **together in the same project folder** (as they are here).
+3. Double-click **`NIFTY_PaperTrading.exe`**.
+4. Wait a few seconds while it starts. Your browser then opens the ML replay page at <http://127.0.0.1:8765/ml>.
+5. The main dashboard is on the same server at <http://127.0.0.1:8765/>.
+
+Running it a second time does not start a second server; it just opens the browser again.
+
+### Stop the dashboard
+
+Double-click **`Stop_Dashboard.exe`**. Closing the browser tab does **not** stop the server; it keeps running in the background until you stop it.
+
+### Prerequisites and limitations
+
+- **Python 3.12 or newer** must be installed and available on the PATH (python.org; tick "Add python.exe to PATH"). The Microsoft Store shortcut does not count.
+- The two `.exe` files are **small launchers**, not a bundled copy of Python or of the application. They only start and stop `python run_ml_demo.py` on your own PC.
+- The executables are **unsigned**, so Windows SmartScreen may show a warning the first time. Choose "More info", then "Run anyway", only if you trust where you got the files. You can rebuild them from source (see [launcher/README.md](launcher/README.md)).
+- The application runs **locally in Synthetic Mode on invented data**. No broker connection, no real market data and no real-money trading are involved.
+- The **first launch creates the application's local data folder** (`application/data/`, ignored by git) and an initial synthetic replay (`run1`). Later launches show the saved replay unchanged.
+- Launcher source, build instructions and troubleshooting: [launcher/README.md](launcher/README.md).
+
 ## Disclosure: how this was built
 
 This project was developed with **substantial assistance from an AI coding assistant (Claude Code)**: the V6 application code, tests and documentation were produced with it. The research (`research/`) predates that work; its final report is written in an assistant's voice, so it was also AI-assisted, but the repository does not record which tool was used. This README does not state what the project owner personally wrote or decided, because that is not recorded in the repository. The owner's own contribution statement, if any, is to be added by the owner. Milestone records in `application/docs/` carry an attribution note saying they were written by the assistant.
@@ -21,6 +48,9 @@ This project was developed with **substantial assistance from an AI coding assis
 ```
 README.md                  this file
 .gitignore, .gitattributes repository rules (research/ is stored byte-for-byte, no line-ending conversion)
+NIFTY_PaperTrading.exe     double-click launcher: starts the dashboard (see Quick Start)
+Stop_Dashboard.exe         double-click launcher: stops the dashboard
+launcher/                  launcher source (C#), build script and README
 application/               the runnable platform (self-contained: its own README, pyproject.toml, tests, docs)
   src/niftypaper/          paper engine, historical replay + audit, ML integration, dashboard, safety scanner
   tests/                   904 automated tests (+ synthetic fixtures)
@@ -41,9 +71,9 @@ screenshots/               four screenshots of the running application (invented
 
 The application re-implements the **definitions** from the research (`lr1` = ln(settle[t-1]/settle[t-2]); `ur1` = underlying[t-1]/underlying[t-2] - 1; the training-rate baseline) and **copies the V5.1 result as a record** shown on the dashboard. It does **not** read the research data, retrain, or recompute anything from it. The fitted parameters of the research models were never saved, so they cannot be loaded; the registry therefore marks them `NONE` (display only, never tradable). See [docs/ML_METHODOLOGY.md](docs/ML_METHODOLOGY.md).
 
-## Install and run the application
+## Manual Launch (Python)
 
-Requires **Python 3.12 or newer** (developed and tested on 3.14.6). Nothing to install: the application uses only the standard library.
+An alternative to the launchers above, for those who prefer PowerShell. Requires **Python 3.12 or newer** (developed and tested on 3.14.6). Nothing to install: the application uses only the standard library.
 
 ```powershell
 cd application

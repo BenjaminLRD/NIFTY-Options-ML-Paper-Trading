@@ -10,6 +10,9 @@ data/
 application/data/
 *.lock
 
+# Built launcher programs (rebuild with launcher/build.ps1)
+launcher/dist/
+
 # Secrets and local configuration (never commit)
 .env
 .env.*
